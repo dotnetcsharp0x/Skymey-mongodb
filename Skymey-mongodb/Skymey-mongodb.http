@@ -1,0 +1,6 @@
+@Skymey_mongodb_HostAddress = http://localhost:5047
+
+GET {{Skymey_mongodb_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
