@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using MongoDB.EntityFrameworkCore.Extensions;
-using Skymey_mongodb.Models;
+using Skymey_main_lib.Models;
 
 namespace Skymey_mongodb.Data
 {
