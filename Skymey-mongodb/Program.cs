@@ -1,4 +1,5 @@
 
+using BenchmarkDotNet.Running;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Skymey_mongodb.Data;
@@ -35,6 +36,7 @@ namespace Skymey_mongodb
             app.MapControllers();
 
             app.Run();
+            //BenchmarkRunner.Run<SkymeyBenchmark>();
         }
     }
 }
