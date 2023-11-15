@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;
 using Skymey_main_lib.Models;
+using Skymey_main_lib.Models.CryptoCurrentPricesView;
+using Skymey_main_lib.Models.Prices;
 using Skymey_main_lib.Models.Prices.StockPrices;
 using Skymey_mongodb.Data;
 
@@ -22,6 +24,12 @@ namespace Skymey_mongodb.Controllers
         public async Task<HashSet<Exchanges>> GetExchanges()
         {
             return (from i in _db.Exchanges select new Exchanges { Name = i.Name, Volume24h = i.Volume24h, Trades = i.Trades, Pairs = i.Pairs, Type = i.Type, Blockchain = i.Blockchain }).ToHashSet();
+        }
+        [HttpGet]
+        [Route("GetPrices")]
+        public async Task<IQueryable<CurrentPrices>> GetPrices()
+        {
+            return (from i in _db.CryptoCurrentPrices select i);
         }
         ~CryptoController() { }
     }
