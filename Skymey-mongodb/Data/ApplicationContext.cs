@@ -4,6 +4,7 @@ using MongoDB.EntityFrameworkCore.Extensions;
 using Skymey_main_lib.Models;
 using Skymey_main_lib.Models.Prices;
 using Skymey_main_lib.Models.Prices.StockPrices;
+using Skymey_main_lib.Models.Tickers.Polygon;
 
 namespace Skymey_mongodb.Data
 {
@@ -12,6 +13,7 @@ namespace Skymey_mongodb.Data
         public DbSet<Exchanges> Exchanges { get; init; }
         public DbSet<StockPrices> StockPrices { get; init; }
         public DbSet<CurrentPrices> CryptoCurrentPrices { get; init; }
+        public DbSet<TickerList> TickerList { get; init; }
         public static ApplicationContext Create(IMongoDatabase database) =>
             new(new DbContextOptionsBuilder<ApplicationContext>()
                 .UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName)
@@ -26,6 +28,7 @@ namespace Skymey_mongodb.Data
             modelBuilder.Entity<Exchanges>().ToCollection("crypto_exchanges");
             modelBuilder.Entity<StockPrices>().ToCollection("stock_current_prices");
             modelBuilder.Entity<CurrentPrices>().ToCollection("crypto_current_prices");
+            modelBuilder.Entity<TickerList>().ToCollection("stock_tickerlist");
         }
     }
 }
