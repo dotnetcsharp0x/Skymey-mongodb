@@ -5,6 +5,7 @@ using MongoDB.Driver.Core.Configuration;
 using Skymey_main_lib.Models;
 using Skymey_main_lib.Models.CryptoCurrentPricesView;
 using Skymey_main_lib.Models.Prices;
+using Skymey_main_lib.Models.Prices.Okex;
 using Skymey_main_lib.Models.Prices.StockPrices;
 using Skymey_mongodb.Data;
 
@@ -21,15 +22,41 @@ namespace Skymey_mongodb.Controllers
         }
         [HttpGet]
         [Route("GetExchanges")]
-        public async Task<HashSet<Exchanges>> GetExchanges()
+        public async Task<List<Exchanges>> GetExchanges()
         {
-            return (from i in _db.Exchanges select new Exchanges { Name = i.Name, Volume24h = i.Volume24h, Trades = i.Trades, Pairs = i.Pairs, Type = i.Type, Blockchain = i.Blockchain }).ToHashSet();
+            return (from i in _db.Exchanges select new Exchanges { Name = i.Name, Volume24h = i.Volume24h, Trades = i.Trades, Pairs = i.Pairs, Type = i.Type, Blockchain = i.Blockchain }).ToList();
         }
         [HttpGet]
         [Route("GetPrices")]
-        public async Task<IQueryable<CurrentPrices>> GetPrices()
+        public async Task<List<CryptoCurrentPricesView>> GetPrices()
         {
-            return (from i in _db.CryptoCurrentPrices select i);
+            List<CryptoCurrentPricesView> cp = new List<CryptoCurrentPricesView>();
+            foreach (var item in (from i in _db.CryptoCurrentPrices select new CurrentPrices { Ticker = i.Ticker, Price = i.Price, Update = i.Update }))
+            {
+                CryptoCurrentPricesView? currentPrices = new CryptoCurrentPricesView();
+                currentPrices.Ticker = item.Ticker.Replace("-SWAP", "").Replace("-", "");
+                currentPrices.Price = item.Price;
+                currentPrices.Update = item.Update;
+                cp.Add(currentPrices);
+                currentPrices = null;
+            }
+            return cp;
+        }
+        [HttpGet]
+        [Route("/api/[controller]/Exchange/Okx/GetPrices")]
+        public async Task<List<CryptoCurrentPricesView>> ExchangeOkxGetPrices()
+        {
+            List<CryptoCurrentPricesView> cp = new List<CryptoCurrentPricesView>();
+            foreach(var item in (from i in _db.OkexCurrentPricesView select new CurrentPrices { Ticker = i.Ticker, Price = i.Price, Update = i.Update }))
+            {
+                CryptoCurrentPricesView? currentPrices = new CryptoCurrentPricesView();
+                currentPrices.Ticker = item.Ticker.Replace("-SWAP", "").Replace("-", "");
+                currentPrices.Price = item.Price;
+                currentPrices.Update = item.Update;
+                cp.Add(currentPrices);
+                currentPrices = null;
+            }
+            return cp;
         }
         ~CryptoController() { }
     }
