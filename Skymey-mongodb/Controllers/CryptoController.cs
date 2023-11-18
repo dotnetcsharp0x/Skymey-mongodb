@@ -24,14 +24,14 @@ namespace Skymey_mongodb.Controllers
         [Route("GetExchanges")]
         public async Task<List<Exchanges>> GetExchanges()
         {
-            return (from i in _db.Exchanges select new Exchanges { Name = i.Name, Volume24h = i.Volume24h, Trades = i.Trades, Pairs = i.Pairs, Type = i.Type, Blockchain = i.Blockchain }).ToList();
+            return (from i in _db.Exchanges select new Exchanges { Name = i.Name, Volume24h = i.Volume24h, Trades = i.Trades, Pairs = i.Pairs, Type = i.Type, Blockchain = i.Blockchain }).AsNoTracking().ToList();
         }
         [HttpGet]
         [Route("GetPrices")]
         public async Task<List<CryptoCurrentPricesView>> GetPrices()
         {
             List<CryptoCurrentPricesView> cp = new List<CryptoCurrentPricesView>();
-            foreach (var item in (from i in _db.CryptoCurrentPrices select new CurrentPrices { Ticker = i.Ticker, Price = i.Price, Update = i.Update }))
+            foreach (var item in (from i in _db.CryptoCurrentPrices select new CurrentPrices { Ticker = i.Ticker, Price = i.Price, Update = i.Update }).AsNoTracking())
             {
                 CryptoCurrentPricesView? currentPrices = new CryptoCurrentPricesView();
                 currentPrices.Ticker = item.Ticker.Replace("-SWAP", "").Replace("-", "");
@@ -47,7 +47,7 @@ namespace Skymey_mongodb.Controllers
         public async Task<List<CryptoCurrentPricesView>> ExchangeOkxGetPrices()
         {
             List<CryptoCurrentPricesView> cp = new List<CryptoCurrentPricesView>();
-            foreach(var item in (from i in _db.OkexCurrentPricesView select new CurrentPrices { Ticker = i.Ticker, Price = i.Price, Update = i.Update }))
+            foreach(var item in (from i in _db.OkexCurrentPricesView select new CurrentPrices { Ticker = i.Ticker, Price = i.Price, Update = i.Update }).AsNoTracking())
             {
                 CryptoCurrentPricesView? currentPrices = new CryptoCurrentPricesView();
                 currentPrices.Ticker = item.Ticker.Replace("-SWAP", "").Replace("-", "");

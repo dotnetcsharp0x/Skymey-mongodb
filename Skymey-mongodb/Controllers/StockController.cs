@@ -7,7 +7,9 @@ using Skymey_main_lib.Models.CryptoCurrentPricesView;
 using Skymey_main_lib.Models.Dividends;
 using Skymey_main_lib.Models.Dividends.Polygon;
 using Skymey_main_lib.Models.Prices;
+using Skymey_main_lib.Models.Prices.Polygon;
 using Skymey_main_lib.Models.Prices.StockPrices;
+using Skymey_main_lib.Models.Prices.StockPricesView;
 using Skymey_main_lib.Models.Tickers;
 using Skymey_main_lib.Models.Tickers.Polygon;
 using Skymey_mongodb.Data;
@@ -25,22 +27,34 @@ namespace Skymey_mongodb.Controllers
         }
         [HttpGet]
         [Route("GetPrices")]
-        public async Task<List<StockPrices>> GetPrices()
+        public async Task<List<StockPricesView>> GetPrices()
         {
-            return (from i in _db.StockPrices select new StockPrices { Ticker = i.Ticker, Figi = i.Figi, Price = i.Price, Currency = i.Currency, Update = i.Update }).ToList();
+            List<StockPricesView> cp = new List<StockPricesView>();
+            foreach (var item in (from i in _db.StockPrices select i).AsNoTracking())
+            {
+                StockPricesView? div = new StockPricesView();
+                div.Ticker = item.Ticker;
+                div.Figi = item.Figi;
+                div.Price = item.Price;
+                div.Currency = item.Currency;
+                div.Update = item.Update;
+                cp.Add(div);
+                div = null;
+            }
+            return cp;
         }
         [HttpGet]
         [Route("GetShares")]
         public async Task<List<TickerList>> GetShares()
         {
-            return (from i in _db.TickerList select i).ToList();
+            return (from i in _db.TickerList select i).AsNoTracking().ToList();
         }
         [HttpGet]
         [Route("GetDividends")]
         public async Task<List<StockDividends>> GetDividends(string ticker)
         {
             List<StockDividends> cp = new List<StockDividends>();
-            var in_db = (from i in _db.DividendsPolygon where i.ticker == ticker select i);
+            var in_db = (from i in _db.DividendsPolygon where i.ticker == ticker select i).AsNoTracking();
             foreach (var item in in_db)
             {
                 StockDividends? div = new StockDividends();
